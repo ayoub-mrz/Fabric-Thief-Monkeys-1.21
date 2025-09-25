@@ -1,0 +1,50 @@
+{
+  "monkey_ambient1": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_ambient1",
+    "sounds": [
+      "thiefmonkeymod:monkey_ambient1"
+    ]
+  },
+  "monkey_ambient2": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_ambient2",
+    "sounds": [
+      "thiefmonkeymod:monkey_ambient2"
+    ]
+  },
+  "monkey_ambient3": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_ambient3",
+    "sounds": [
+      "thiefmonkeymod:monkey_ambient3"
+    ]
+  },
+  "monkey_ambient4": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_ambient4",
+    "sounds": [
+      "thiefmonkeymod:monkey_ambient4"
+    ]
+  },
+  "monkey_hurt": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_hurt",
+    "sounds": [
+      "thiefmonkeymod:monkey_hurt"
+    ]
+  },
+  "monkey_hurt2": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_hurt2",
+    "sounds": [
+      "thiefmonkeymod:monkey_hurt2"
+    ]
+  },
+  "monkey_death1": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_death1",
+    "sounds": [
+      "thiefmonkeymod:monkey_death1"
+    ]
+  },
+  "monkey_death2": {
+    "subtitle": "sounds.thiefmonkeymod.monkey_death2",
+    "sounds": [
+      "thiefmonkeymod:monkey_death2"
+    ]
+  }
+}
