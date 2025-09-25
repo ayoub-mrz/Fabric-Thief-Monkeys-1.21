@@ -30,6 +30,6 @@ public class ThiefMonkeyMod implements ModInitializer {
 		ModWorldGeneration.generateModWorldGen();
 
 		ModSounds.registerSounds();
-		
+
 	}
 }

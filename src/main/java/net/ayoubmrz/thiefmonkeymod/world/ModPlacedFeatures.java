@@ -18,7 +18,6 @@ public class ModPlacedFeatures {
 
     public static void bootstrap(Registerable<PlacedFeature> context) {
         var configuredFeatures = context.getRegistryLookup(RegistryKeys.CONFIGURED_FEATURE);
-
     }
 
     public static RegistryKey<PlacedFeature> registerKey(String name) {

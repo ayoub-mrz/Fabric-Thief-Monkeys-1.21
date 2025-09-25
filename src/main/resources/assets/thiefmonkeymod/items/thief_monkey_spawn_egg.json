@@ -1,0 +1,16 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "thiefmonkeymod:item/thief_monkey_spawn_egg",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": 16765872
+      },
+      {
+        "type": "minecraft:constant",
+        "value": 11755046
+      }
+    ]
+  }
+}

@@ -4,21 +4,24 @@ import net.ayoubmrz.thiefmonkeymod.ThiefMonkeyMod;
 import net.ayoubmrz.thiefmonkeymod.entity.custom.ThiefMonkeyEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class ThiefMonkeyModel<T extends ThiefMonkeyEntity> extends GeoModel<ThiefMonkeyEntity> {
 
+
     @Override
-    public Identifier getModelResource(ThiefMonkeyEntity thiefMonkeyEntity) {
+    public Identifier getModelResource(ThiefMonkeyEntity thiefMonkeyEntity, @Nullable GeoRenderer<ThiefMonkeyEntity> geoRenderer) {
         return Identifier.of(ThiefMonkeyMod.MOD_ID, "geo/thief_monkey.geo.json");
     }
 
     @Override
-    public Identifier getTextureResource(ThiefMonkeyEntity thiefMonkeyEntity) {
+    public Identifier getTextureResource(ThiefMonkeyEntity thiefMonkeyEntity, @Nullable GeoRenderer<ThiefMonkeyEntity> geoRenderer) {
         return Identifier.of(ThiefMonkeyMod.MOD_ID, "textures/entity/thief_monkey.png");
     }
 

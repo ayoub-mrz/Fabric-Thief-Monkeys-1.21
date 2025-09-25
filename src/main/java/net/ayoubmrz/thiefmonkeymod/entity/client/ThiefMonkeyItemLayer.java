@@ -5,10 +5,11 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ModelTransformationMode;
 import net.minecraft.util.math.RotationAxis;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -20,10 +21,7 @@ public class ThiefMonkeyItemLayer extends GeoRenderLayer<ThiefMonkeyEntity> {
     }
 
     @Override
-    public void render(MatrixStack poseStack, ThiefMonkeyEntity animatable, BakedGeoModel bakedModel,
-                       RenderLayer renderType, VertexConsumerProvider bufferSource,
-                       VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-
+    public void render(MatrixStack poseStack, ThiefMonkeyEntity animatable, BakedGeoModel bakedModel, @Nullable RenderLayer renderType, VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
         ItemStack heldItem = animatable.getHeldItem();
         if (!heldItem.isEmpty()) {
             GeoBone handBone = this.getGeoModel().getBone("right_hand").orElse(null);
@@ -52,4 +50,5 @@ public class ThiefMonkeyItemLayer extends GeoRenderLayer<ThiefMonkeyEntity> {
             }
         }
     }
+
 }

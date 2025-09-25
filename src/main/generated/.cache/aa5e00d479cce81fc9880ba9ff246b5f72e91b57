@@ -1,3 +1,5 @@
-// 1.21	2025-09-17T16:25:03.9215342	Thief Monkey Mod/Model Definitions
-63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\thiefmonkeymod\models\item\thief_monkey_spawn_egg.json
-8dfdc026bd47632b4675616d5a3d16bc8dd4fcfd assets\thiefmonkeymod\models\item\banana.json
+// 1.21.4	-999999999-01-01T00:00:00	Thief Monkey Mod/Model Definitions
+4fb21557b0e71d40d9d37e955d2d55fe1684aea0 assets/thiefmonkeymod/items/banana.json
+b49845480416dc1cafbca3f0b6aab24c58ece5f8 assets/thiefmonkeymod/items/thief_monkey_spawn_egg.json
+8dfdc026bd47632b4675616d5a3d16bc8dd4fcfd assets/thiefmonkeymod/models/item/banana.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/thiefmonkeymod/models/item/thief_monkey_spawn_egg.json

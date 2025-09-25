@@ -142,7 +142,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
                 }
 
             }
-            return ActionResult.success(this.getWorld().isClient);
+            return ActionResult.SUCCESS;
         }
 
         return super.interactMob(player, hand);
@@ -156,23 +156,24 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
     private void performAttack() {
         LivingEntity target = this.getTarget();
         if (this.isAlive() && target != null && this.canSee(target)) {
+            ServerWorld serverWorld = (ServerWorld) this.getWorld();
 
             // If target is a player, try to steal an item
             if (target instanceof PlayerEntity player) {
                 this.setHasAttacked(true);
                 stealRandomItem(player);
             }
-            this.tryAttack(target);
+            this.tryAttack(serverWorld, target);
         }
     }
 
     @Override
-    public boolean tryAttack(Entity target) {
+    public boolean tryAttack(ServerWorld world, Entity target) {
         if (!isAttackWindingUp) {
             startAttackWindup();
             return false;
         }
-        return super.tryAttack(target);
+        return super.tryAttack(world, target);
     }
 
     private void stealRandomItem(PlayerEntity player) {
@@ -238,14 +239,13 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
     }
 
     @Override
-    protected void dropInventory() {
-        super.dropInventory();
-
+    protected void dropInventory(ServerWorld world) {
+        super.dropInventory(world);
         // Drop all items from the monkey's inventory
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {
-                this.dropStack(stack);
+                this.dropStack(world, stack);
             }
         }
 
@@ -255,7 +255,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
 
     @Override
     public @Nullable PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
-        return ModEntities.THIEF_MONKEY.create(world);
+        return ModEntities.THIEF_MONKEY.create(world, SpawnReason.BREEDING);
     }
 
     @Override
@@ -284,10 +284,11 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
 
     public static DefaultAttributeContainer.Builder setAttributes() {
         return HostileEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 1.0F)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.4F)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35.0F);
+                .add(EntityAttributes.MAX_HEALTH, 10.0D)
+                .add(EntityAttributes.ATTACK_DAMAGE, 1.0F)
+                .add(EntityAttributes.MOVEMENT_SPEED, 0.4F)
+                .add(EntityAttributes.FOLLOW_RANGE, 35.0F)
+                .add(EntityAttributes.TEMPT_RANGE, 10.0D);
     }
 
     @Override
@@ -376,7 +377,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
         // Save inventory
         ItemStack stack = inventory.getStack(0);
         if (!stack.isEmpty()) {
-            NbtCompound itemNbt = (NbtCompound) stack.encode(this.getRegistryManager());
+            NbtCompound itemNbt = (NbtCompound) stack.toNbtAllowEmpty(this.getRegistryManager());
             nbt.put("Item", itemNbt);
         }
 
@@ -386,7 +387,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
         // Save HELD_ITEM state
         ItemStack heldItem = this.getHeldItem();
         if (!heldItem.isEmpty()) {
-            NbtCompound heldItemNbt = (NbtCompound) heldItem.encode(this.getRegistryManager());
+            NbtCompound heldItemNbt = (NbtCompound) heldItem.toNbtAllowEmpty(this.getRegistryManager());
             nbt.put("HeldItem", heldItemNbt);
         }
 

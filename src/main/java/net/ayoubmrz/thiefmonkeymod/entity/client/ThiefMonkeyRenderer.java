@@ -2,20 +2,10 @@ package net.ayoubmrz.thiefmonkeymod.entity.client;
 
 import net.ayoubmrz.thiefmonkeymod.ThiefMonkeyMod;
 import net.ayoubmrz.thiefmonkeymod.entity.custom.ThiefMonkeyEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 public class ThiefMonkeyRenderer extends GeoEntityRenderer<ThiefMonkeyEntity> {

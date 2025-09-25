@@ -11,10 +11,7 @@ import net.minecraft.world.gen.feature.FeatureConfig;
 
 public class ModConfiguredFeatures {
 
-    public static void bootstrap(Registerable<ConfiguredFeature<?, ?>> context) {
-
-
-    }
+    public static void bootstrap(Registerable<ConfiguredFeature<?, ?>> context) {}
 
     public static RegistryKey<ConfiguredFeature<?, ?>> registerKey(String name) {
         return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, Identifier.of(ThiefMonkeyMod.MOD_ID, name));

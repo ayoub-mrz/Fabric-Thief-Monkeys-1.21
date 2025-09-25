@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Hand;
 
 import java.util.Random;
@@ -138,9 +139,10 @@ public class ThiefMonkeyMeleeAttackGoal extends Goal {
 
     protected void attack(LivingEntity target) {
         if (this.canAttack(target)) {
+            ServerWorld serverWorld = (ServerWorld) target.getWorld();
             this.resetCooldown();
             this.mob.swingHand(Hand.MAIN_HAND);
-            this.mob.tryAttack(target);
+            this.mob.tryAttack(serverWorld, target);
 
             this.mob.setAttackCooldown(0);
             this.hasStartedAttackPhase = false;
