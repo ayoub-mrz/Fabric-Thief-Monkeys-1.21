@@ -55,11 +55,27 @@
 					]
 				},
 				{
+					"name": "LeftHandItem",
+					"parent": "left_hand",
+					"pivot": [3, 3.5, -0.5],
+					"cubes": [
+						{"origin": [2, 3.5, -1.5], "size": [2, 2, 2], "uv": [20, 9]}
+					]
+				},
+				{
 					"name": "right_hand",
 					"parent": "hands",
 					"pivot": [-2, 11.5, -0.5],
 					"cubes": [
 						{"origin": [-4, 3.5, -1.5], "size": [2, 8, 2], "uv": [0, 18]}
+					]
+				},
+				{
+					"name": "RightHandItem",
+					"parent": "right_hand",
+					"pivot": [-3, 3.5, -0.5],
+					"cubes": [
+						{"origin": [-4, 3.5, -1.5], "size": [2, 2, 2], "uv": [20, 9]}
 					]
 				},
 				{

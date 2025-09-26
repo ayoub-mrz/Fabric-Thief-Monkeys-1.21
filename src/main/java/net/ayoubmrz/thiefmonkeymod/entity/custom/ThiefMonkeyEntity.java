@@ -4,6 +4,7 @@ import net.ayoubmrz.thiefmonkeymod.entity.ModEntities;
 import net.ayoubmrz.thiefmonkeymod.entity.ai.ThiefMonkeyMeleeAttackGoal;
 import net.ayoubmrz.thiefmonkeymod.item.ModItems;
 import net.ayoubmrz.thiefmonkeymod.sound.ModSounds;
+import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -19,22 +20,23 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.animation.AnimationState;
 
 import java.util.Random;
 
@@ -183,7 +185,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
             return;
         }
 
-        DefaultedList<ItemStack> playerInventory = player.getInventory().main;
+        DefaultedList<ItemStack> playerInventory = player.getInventory().getMainStacks();
         Random random = new Random();
 
         boolean hasItems = playerInventory.stream().anyMatch(stack -> !stack.isEmpty());
@@ -305,15 +307,17 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 5, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackController", 0, this::attackPredicate));
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>("controller", 5, this::predicate));
+        controllers.add(new AnimationController<>("attackController", 0, this::attackPredicate));
     }
 
-    private PlayState attackPredicate(AnimationState<ThiefMonkeyEntity> event) {
+
+
+    private PlayState attackPredicate(AnimationTest<GeoAnimatable> event) {
         if (this.handSwinging) {
-            event.getController().forceAnimationReset();
-            event.getController().setAnimation(
+            event.controller().forceAnimationReset();
+            event.controller().setAnimation(
                     RawAnimation.begin().then("animation.thief_monkey.attack", Animation.LoopType.PLAY_ONCE)
             );
             this.handSwinging = false;
@@ -323,20 +327,21 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
         return PlayState.CONTINUE;
     }
 
-    private PlayState predicate(AnimationState<ThiefMonkeyEntity> animationState) {
-        var controller = animationState.getController();
+    private PlayState predicate(AnimationTest<GeoAnimatable> animationState) {
+        var controller = animationState.controller();
 
         if (animationState.isMoving() && !this.handSwinging) {
-            if (getHeldItem().isEmpty()) {
-                controller.setAnimation(RawAnimation.begin().then("animation.thief_monkey.walk", Animation.LoopType.LOOP));
-            } else {
-                controller.setAnimation(RawAnimation.begin().then("animation.thief_monkey.walk_with_item", Animation.LoopType.LOOP));
-            }
+            controller.setAnimation(RawAnimation.begin().then("animation.thief_monkey.walk", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }
 
         controller.setAnimation(RawAnimation.begin().then("animation.thief_monkey.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
+    }
+
+    @Override
+    public void lookAt(EntityAnchorArgumentType.EntityAnchor anchorPoint, Vec3d target) {
+        super.lookAt(anchorPoint, target);
     }
 
     @Override
@@ -371,13 +376,23 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
     }
 
     @Override
+    public ItemStack getMainHandStack() {
+        return this.getHeldItem();
+    }
+
+    @Override
+    public ItemStack getOffHandStack() {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
 
         // Save inventory
         ItemStack stack = inventory.getStack(0);
         if (!stack.isEmpty()) {
-            NbtCompound itemNbt = (NbtCompound) stack.toNbtAllowEmpty(this.getRegistryManager());
+            NbtCompound itemNbt = (NbtCompound) stack.toNbt(this.getRegistryManager());
             nbt.put("Item", itemNbt);
         }
 
@@ -387,7 +402,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
         // Save HELD_ITEM state
         ItemStack heldItem = this.getHeldItem();
         if (!heldItem.isEmpty()) {
-            NbtCompound heldItemNbt = (NbtCompound) heldItem.toNbtAllowEmpty(this.getRegistryManager());
+            NbtCompound heldItemNbt = (NbtCompound) heldItem.toNbt(this.getRegistryManager());
             nbt.put("HeldItem", heldItemNbt);
         }
 
@@ -402,7 +417,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
 
         // Load inventory
         if (nbt.contains("Item")) {
-            ItemStack stack = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("Item")).orElse(ItemStack.EMPTY);
+            ItemStack stack = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("Item").get()).orElse(ItemStack.EMPTY);
             inventory.setStack(0, stack);
         } else {
             inventory.clear();
@@ -410,12 +425,12 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
 
         // Load HAS_ATTACKED state
         if (nbt.contains("HasAttacked")) {
-            this.setHasAttacked(nbt.getBoolean("HasAttacked"));
+            this.setHasAttacked(nbt.getBoolean("HasAttacked").get());
         }
 
         // Load HELD_ITEM state
         if (nbt.contains("HeldItem")) {
-            ItemStack heldItem = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("HeldItem")).orElse(ItemStack.EMPTY);
+            ItemStack heldItem = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("HeldItem").get()).orElse(ItemStack.EMPTY);
             this.dataTracker.set(HELD_ITEM, heldItem);
         } else {
             this.dataTracker.set(HELD_ITEM, ItemStack.EMPTY);
@@ -423,7 +438,7 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
 
         // Load shouldRun state
         if (nbt.contains("ShouldRun")) {
-            this.shouldRun = nbt.getBoolean("ShouldRun");
+            this.shouldRun = nbt.getBoolean("ShouldRun").get();
         }
 
     }
