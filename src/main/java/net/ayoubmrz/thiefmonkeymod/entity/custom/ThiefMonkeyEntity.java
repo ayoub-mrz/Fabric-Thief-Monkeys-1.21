@@ -20,9 +20,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.collection.DefaultedList;
@@ -38,6 +41,7 @@ import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.*;
 
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -386,60 +390,47 @@ public class ThiefMonkeyEntity extends AnimalEntity implements GeoEntity {
     }
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-
-        // Save inventory
+    protected void writeCustomData(WriteView view) {
+        super.writeCustomData(view);
+        //Save inventory
         ItemStack stack = inventory.getStack(0);
         if (!stack.isEmpty()) {
-            NbtCompound itemNbt = (NbtCompound) stack.toNbt(this.getRegistryManager());
-            nbt.put("Item", itemNbt);
+            view.put("Item", ItemStack.CODEC, stack);
         }
 
         // Save HAS_ATTACKED state
-        nbt.putBoolean("HasAttacked", this.hasAttacked());
+        view.putBoolean("HasAttacked", this.hasAttacked());
 
         // Save HELD_ITEM state
         ItemStack heldItem = this.getHeldItem();
         if (!heldItem.isEmpty()) {
-            NbtCompound heldItemNbt = (NbtCompound) heldItem.toNbt(this.getRegistryManager());
-            nbt.put("HeldItem", heldItemNbt);
+            view.put("HeldItem", ItemStack.CODEC, heldItem);
         }
 
         // Save shouldRun state
-        nbt.putBoolean("ShouldRun", this.shouldRun);
-
+        view.putBoolean("ShouldRun", this.shouldRun);
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-
+    protected void readCustomData(ReadView view) {
+        super.readCustomData(view);
         // Load inventory
-        if (nbt.contains("Item")) {
-            ItemStack stack = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("Item").get()).orElse(ItemStack.EMPTY);
-            inventory.setStack(0, stack);
+        Optional<ItemStack> stackOptional = view.read("Item", ItemStack.CODEC);
+        if (stackOptional.isPresent()) {
+            inventory.setStack(0, stackOptional.get());
         } else {
             inventory.clear();
         }
 
         // Load HAS_ATTACKED state
-        if (nbt.contains("HasAttacked")) {
-            this.setHasAttacked(nbt.getBoolean("HasAttacked").get());
-        }
+        this.setHasAttacked(view.getBoolean("HasAttacked", false));
 
         // Load HELD_ITEM state
-        if (nbt.contains("HeldItem")) {
-            ItemStack heldItem = ItemStack.fromNbt(this.getRegistryManager(), nbt.getCompound("HeldItem").get()).orElse(ItemStack.EMPTY);
-            this.dataTracker.set(HELD_ITEM, heldItem);
-        } else {
-            this.dataTracker.set(HELD_ITEM, ItemStack.EMPTY);
-        }
+        ItemStack heldItem = view.read("HeldItem", ItemStack.CODEC).orElse(ItemStack.EMPTY);
+        this.dataTracker.set(HELD_ITEM, heldItem);
 
         // Load shouldRun state
-        if (nbt.contains("ShouldRun")) {
-            this.shouldRun = nbt.getBoolean("ShouldRun").get();
-        }
+        this.shouldRun = view.getBoolean("ShouldRun", false);
 
     }
 
